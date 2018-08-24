@@ -12,10 +12,9 @@ class CartController extends AbstractController
 {
     /**
      * @Route("/order/cart", name="order.cart")
-     * @param CartInterface $cart
      * @return Response
      */
-    public function index(CartInterface $cart)
+    public function index()
     {
         $cart = $this->getDoctrine()
             ->getRepository(Cart::class)
@@ -37,7 +36,7 @@ class CartController extends AbstractController
     public function addToCart($itemId,CartInterface $cart)
     {
         $cart->addToCart($itemId ,1);
-        return $this->redirectToRoute('items');
+        return $this->redirectToRoute('order.cart');
     }
 
 
