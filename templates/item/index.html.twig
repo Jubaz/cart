@@ -18,7 +18,10 @@
                 <th scope="row">{{ item.id }}</th>
                 <td>{{ item.title }}</td>
                 <td>{{ item.price }}</td>
-                <td><a href="{{ path('addToCart', {'itemId': item.id}) }}">add to cart</a></td>
+                <td>
+                    <a href="{{ path('addToCart', {'id': item.id}) }}">add to cart</a>
+                    <a href="{{ path('addToWishList', {'id': item.id}) }}">add to wish list</a>
+                </td>
             </tr>
         {% endfor %}
 

@@ -1,34 +1,37 @@
 <?php
-
-namespace App\Service\Cart;
+namespace App\Service\Cart\Order;
 
 
 use App\Entity\Cart;
 use App\Entity\CartDetails;
 use App\Entity\Item;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Security;
+use App\Service\Cart\AddToCartInterface;
 
-class OrderCart extends CartAbstract implements CartInterface
+
+class AddToOrderOrderCart extends OrderCartAbstract implements AddToCartInterface
 {
 
-    public function __construct(EntityManagerInterface $entityManager ,Security $security)
+    private  $item ;
+
+    private $quantity = 1;
+
+    public function __construct(item $item,$entityManager ,$security)
     {
+        $this->item = $item;
         parent::__construct($entityManager , $security);
     }
 
-    public function addToCart($itemId ,int $quantity)
+    public function add()
     {
-        $item = $this->ItemChecker($itemId);
-
-        // check if there is cart for this user or not
-
+        // check if there is cartApp for this user or not
         $cart = $this->cartChecker();
 
         if (!$cart) {
-            // there is no cart for this user let's add one with item
-            $this->addNewCart($item,$quantity);
+            // there is no cartApp for this user let's add one with item
+            $this->addNewCart($this->item,$this->quantity);
         }
+        $item = $this->item;
+
 
         // get the same item
         $cartDetails = $cart->getCartDetails()->filter(
@@ -38,7 +41,7 @@ class OrderCart extends CartAbstract implements CartInterface
         );
 
         if ($cartDetails->isEmpty()){
-            $this->addNewItem($item,$cart,1);
+            $this->addNewItem($item,$cart,$this->quantity);
         }
 
         $this->updateQuantity($cartDetails,2);
@@ -51,13 +54,13 @@ class OrderCart extends CartAbstract implements CartInterface
      */
     private function addNewCart(Item $item , int $quantity)
     {
-        // building cart details entity
+        // building cartApp details entity
         $cartDetails = $this->cartDetailsBuilder($item,$quantity);
 
-        // building cart entity
+        // building cartApp entity
         $cart = new Cart();
         $cart->setTotalPrice($item->getPrice())
-            ->setUser($this->security->getUser())
+            ->setUser($this->security)
             ->addCartDetail($cartDetails);
 
         $this->entityManager->persist($cartDetails);
@@ -80,7 +83,4 @@ class OrderCart extends CartAbstract implements CartInterface
         }
         $this->entityManager->flush();
     }
-
-
-
 }

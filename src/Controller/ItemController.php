@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Item;
-use App\Service\Cart\CartInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;

@@ -1,25 +1,23 @@
 <?php
 
-namespace App\Service\Cart;
+namespace App\Service\Cart\Order;
 
 
 use App\Entity\Cart;
 use App\Entity\CartDetails;
 use App\Entity\Item;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Security;
 
-abstract class CartAbstract
+abstract class OrderCartAbstract
 {
     protected $entityManager;
 
-    protected $security;
+    protected $authUser;
 
-    public function __construct(EntityManagerInterface $entityManager ,Security $security)
+    public function __construct($entityManager ,$authUser)
     {
         $this->entityManager = $entityManager;
-        $this->security = $security;
+        $this->authUser = $authUser;
     }
 
 
@@ -43,14 +41,14 @@ abstract class CartAbstract
 
 
     /**
-     * check if there is cart for logged in user or not
+     * check if there is cartApp for logged in user or not
      * @return bool|null|object
      */
     public function cartChecker()
     {
         $cart = $this->entityManager
             ->getRepository(Cart::class)->findOneBy([
-                'user' => $this->security->getUser()
+                'user' => $this->security
             ]);
 
         if (!$cart)
@@ -60,10 +58,10 @@ abstract class CartAbstract
     }
 
     /**
-     * building a new cart details entity
+     * building a new cartApp details entity
      * @param Item $item
      * @param int $quantity
-     * @param Cart|null $cart
+     * @param Cart $cart
      * @return CartDetails
      */
     public function cartDetailsBuilder(Item $item , int $quantity, Cart $cart = null) : CartDetails
